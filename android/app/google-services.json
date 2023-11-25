@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "578322082537",
+    "project_id": "vetsys-aeeb6",
+    "storage_bucket": "vetsys-aeeb6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578322082537:android:a41ee3eb9240e90ac95e78",
+        "android_client_info": {
+          "package_name": "com.example.rutasmicros"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaIjLp-PSWhaCxoay6s16qSVByxApD6n4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578322082537:android:de9a76b39e0da89ac95e78",
+        "android_client_info": {
+          "package_name": "com.example.vetsys"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaIjLp-PSWhaCxoay6s16qSVByxApD6n4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
