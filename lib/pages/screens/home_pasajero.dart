@@ -4,6 +4,7 @@ import 'package:rutasmicros/pages/screens/pasajeros/provider/funcionapls.dart';
 
 import 'pasajeros/listar_pasajeros.dart';
 import 'pasajeros/prueba_mapa.dart';
+import 'pasajeros/seleccionar_ruta.dart';
 import 'pasajeros/welcome_pasajeros.dart';
 
 class HomePasajero extends StatefulWidget {
@@ -33,7 +34,7 @@ class _HomePasajeroState extends State<HomePasajero> {
         children: [
           PasajerosPage(),
           ScreenPasajeros(),
-          MapScreenWrapper(), // Usa MapScreenWrapper en lugar de MapScreen directamente
+          Rutas2Page(), 
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
