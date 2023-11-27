@@ -16,6 +16,9 @@ class _MapScreenState extends State<MapScreen> {
   late Position currentPosition;
   Set<Marker> markers = {};
 
+
+
+
   @override
   void initState() {
     super.initState();
@@ -45,15 +48,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void showNewPolygon() {
-    setState(() {
-    });
+    setState(() {});
   }
 
-   void _addMarker(double lat, double lng) {
+  void _addMarker(double lat, double lng) {
     Marker marker = Marker(
-      markerId: MarkerId('ubicacionActual'),
+      markerId: const MarkerId('ubicacionActual'),
       position: LatLng(lat, lng),
-      infoWindow: InfoWindow(title: 'Mi ubi'),
+      infoWindow: const InfoWindow(title: 'Mi ubi'),
       icon: BitmapDescriptor.defaultMarker,
     );
 
@@ -65,24 +67,27 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('RUTAS DE MICROS'),
+      ),
       body: GoogleMap(
         onMapCreated: (controller) {
           setState(() {
             mapController = controller;
           });
         },
-        initialCameraPosition: CameraPosition(
-          target: LatLng(37.7749, -122.4194),
+        initialCameraPosition: const CameraPosition(
+          target: LatLng(-21.53318473012909, -64.73134628111355),
           zoom: 12.0,
         ),
         markers: markers,
         polygons: {
-          Polygon(
-            polygonId: PolygonId('polyId'),
-            points: widget.rutaSeleccionada,
-            strokeWidth: 2,
-            strokeColor: Colors.blue,
-            fillColor: Colors.blue.withOpacity(0.3),
+            Polygon(
+              polygonId: const PolygonId('polyId'),
+              points: widget.rutaSeleccionada,
+              strokeWidth: 2,
+              strokeColor: Colors.blue,
+              fillColor: Colors.transparent,
           ),
         },
       ),
