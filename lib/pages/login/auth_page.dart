@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'login_widget.dart';
-import 'signup_widget.dart';
+import 'login.dart';
+import 'register.dart';
 
 //esto no es una vista
 
@@ -15,8 +15,8 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) => isLogin
-      ? LoginWidget(onClickedSignUp: toggle)
-      : SignUpWidget(onClickedSignIn: toggle);
+      ? MyLogin(onClickedSignUp: toggle)
+      : MyRegister(onClickedSignIn: toggle);
 
   void toggle() => setState(() => isLogin = !isLogin);
 }
