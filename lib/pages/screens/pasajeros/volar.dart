@@ -72,8 +72,9 @@ class _VolarState extends State<Volar> {
                       trailing: IconButton(
                         icon: Icon(Icons.directions),
                         onPressed: () {
+                          List<String> allUserIds = snapshot.data!.docs.map((doc) => doc.id).toList();
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => Levitar(snapshot.data!.docs[index].id),
+                            builder: (context) => Levitar(allUserIds),
                           ));
                         },
                       ),

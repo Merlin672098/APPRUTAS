@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rutasmicros/firebase_options.dart';
 import 'package:rutasmicros/utils.dart';
-
 import 'pages/login/auth_page.dart';
 import 'pages/login/verify_email_page.dart';
 
@@ -15,6 +14,8 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   //await FirebaseApi().initNotifications();
+
+
   runApp(MyApp());
 }
 

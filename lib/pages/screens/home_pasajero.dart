@@ -40,7 +40,7 @@ class HomePasajero extends StatelessWidget {
             ),
             Tab(
               icon: Icon(Icons.home),
-              text: "Home",
+              text: "MAPAMAPA",
             ),
           ]),
         ),

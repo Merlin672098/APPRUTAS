@@ -10,7 +10,7 @@ class HomeAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     // ignore: non_constant_identifier_names
     final TabController = DefaultTabController(
-      length: 2, //numero de los iconos o tabs
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Admin'),
