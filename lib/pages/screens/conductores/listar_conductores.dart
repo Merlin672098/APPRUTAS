@@ -5,7 +5,7 @@ class ConductorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Bienvenido ADMIN!',
+        child: Text('Bienvenido conductor!',
         style: TextStyle(fontSize: 24),),
       ),
     );

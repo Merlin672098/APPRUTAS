@@ -22,7 +22,6 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
     else if (nombreLinea.contains('e')) {
       return E;
     }
-
     return [];
   }
     static const List<LatLng> Chroja = [

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         scaffoldMessengerKey: Utils.messengerKey,
         navigatorKey: navigatorKey,
-        theme: ThemeData.dark(),
+        //theme: ThemeData.dark(),
         home: MainPage(),
         debugShowCheckedModeBanner: false,
       );
