@@ -12,18 +12,17 @@ class PasajerosPage extends StatefulWidget {
 }
 
 class _PasajerosPageState extends State<PasajerosPage> {
-List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
-
-    String nombreLinea = nombreDocumento.toLowerCase(); 
+  List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
+    String nombreLinea = nombreDocumento.toLowerCase();
 
     if (nombreLinea.contains('chroja')) {
       return Chroja;
-    }
-    else if (nombreLinea.contains('e')) {
+    } else if (nombreLinea.contains('e')) {
       return E;
     }
     return [];
   }
+
     static const List<LatLng> Chroja = [
       LatLng(-21.520855079224976, -64.71685835219307),
       LatLng(-21.523019767098457, -64.71782839960476),
@@ -108,6 +107,7 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
     
     ];
   List<LatLng> rutaSeleccionada = Chroja;
+
   @override
   void initState() {
     super.initState();
@@ -118,7 +118,7 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Porfa no me mates'),
+        title: const Text('RUTAS'),
       ),
       body: Column(
         children: [
@@ -132,20 +132,30 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
                 return ListView.builder(
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data!.docs[index]['nombre'].toString()),
-                      subtitle: const Row(),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.directions),
-                        onPressed: () {
-                          String nombreDocumento = snapshot.data!.docs[index]['nombre'].toString();
-                          List<LatLng> listaCoordenadas = obtenerListaDeCoordenadas(nombreDocumento);
-
-                          String selectedUserId = snapshot.data!.docs[index].id;
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => Funciona(selectedUserId, listaCoordenadas),
-                          ));
-                        },
+                    return Card(
+                      elevation: 5,
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      color: Colors.blueGrey[50],
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: AssetImage('assets/login.png'), // Reemplaza con tu imagen
+                          ),
+                          title: Text(
+                            snapshot.data!.docs[index]['nombre'].toString(),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: const SizedBox(), 
+                            trailing: IconButton(
+                              icon: const Icon(Icons.pin_drop),
+                              onPressed: () {
+                                String nombreDocumento = snapshot.data!.docs[index]['nombre'].toString();
+                                List<LatLng> listaCoordenadas = obtenerListaDeCoordenadas(nombreDocumento);
+                                String selectedUserId = snapshot.data!.docs[index].id;
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => Funciona(selectedUserId, listaCoordenadas),
+                                ));
+                              },
+                        ),
                       ),
                     );
                   },
@@ -157,6 +167,7 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
       ),
     );
   }
+
 
    Future<Position> _requestPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -174,7 +185,7 @@ List<LatLng> obtenerListaDeCoordenadas(String nombreDocumento) {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('La ubicaion esta permanentementedenegada');
+      return Future.error('La ubicación esta permanentemente denegada');
     }
 
     return await Geolocator.getCurrentPosition();

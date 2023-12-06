@@ -40,7 +40,7 @@ class _MyLoginState extends State<MyLogin> {
             Container(
               padding: EdgeInsets.only(left: 35, top: 130),
               child: Text(
-                'Welcome\nBack',
+                '¡Hola!\nBienvenido',
                 style: TextStyle(color: Colors.white, fontSize: 33),
               ),
             ),
@@ -78,7 +78,7 @@ class _MyLoginState extends State<MyLogin> {
                             decoration: InputDecoration(
                               fillColor: Colors.grey.shade100,
                               filled: true,
-                              hintText: "Password",
+                              hintText: "Contraseña",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -121,7 +121,7 @@ class _MyLoginState extends State<MyLogin> {
                               TextButton(
                                 onPressed: widget.onClickedSignUp,
                                 child: Text(
-                                  'Registrese',
+                                  'Registrarse',
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     color: Theme.of(context)
@@ -138,7 +138,7 @@ class _MyLoginState extends State<MyLogin> {
                                   ),
                                 ),
                                 child: Text(
-                                  'Forgot Password',
+                                  '¿Contraseña?',
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     color: Color(0xff4c505b),
