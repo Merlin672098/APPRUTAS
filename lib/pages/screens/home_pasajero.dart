@@ -1,68 +1,140 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rutasmicros/pages/screens/pasajeros/provider/funcionapls.dart';
+import 'package:provider/provider.dart';
+import 'package:rutasmicros/pruebaprovider.dart';
 
+import 'pasajeros/favoritos.dart';
 import 'pasajeros/listar_pasajeros.dart';
-import 'pasajeros/prueba_mapa.dart';
-import 'pasajeros/seleccionar_ruta.dart';
-import 'pasajeros/volar.dart';
-import 'pasajeros/welcome_pasajeros.dart';
+import 'pasajeros/tarifas/tarifas_page.dart';
 
-class HomePasajero extends StatelessWidget {
+class HomePasajero extends StatefulWidget {
+  @override
+  _HomePasajeroState createState() => _HomePasajeroState();
+}
+
+class _HomePasajeroState extends State<HomePasajero> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ignore: non_constant_identifier_names
-    final TabController = DefaultTabController(
-      length: 4, //numero de los iconos o tabs
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Pasajero'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.exit_to_app),
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-            ),
-          ],
-          bottom: const TabBar(indicatorColor: Colors.red, tabs: <Widget>[
-            Tab(
-              icon: Icon(Icons.home),
-              text: "Home",
-            ),
-            Tab(
-              icon: Icon(Icons.contacts),
-              text: "Usuarios",
-            ),
-            Tab(
-              icon: Icon(Icons.map),
-              text: "Soy el mapa",
-            ),
-            Tab(
-              icon: Icon(Icons.home),
-              text: "MAPAMAPA",
-            ),
-          ]),
-        ),
-        body: TabBarView(children: <Widget>[
-          PasajerosPage(),
-          ScreenPasajeros(),
-          Rutas2Page(), 
-          Volar(),
+    List<Widget> _widgetOptions = [
+      FavoritosPage(),
+      PasajerosPage(),
+    ];
 
-        ]),
-      ),
-    );
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Admin',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: TabController,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Admin',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeProvider.isDarkModeEnabled ? ThemeMode.dark : ThemeMode.light,
+          home: Scaffold(
+            appBar: AppBar(
+              title: const Text('Pasajero'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                ),
+              ],
+            ),
+            body: _widgetOptions[_selectedIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  label: 'TUS RUTAS',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.directions_walk),
+                  label: 'TODAS LAS RUTAS',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.red,
+              onTap: _onItemTapped,
+            ),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  const DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 105, 186, 253),
+                    ),
+                    child: Text(
+                      'Drawer Header',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.account_circle),
+                    title: Text(
+                      'Tema Oscuro',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    trailing: Switch(
+                      value: themeProvider.isDarkModeEnabled,
+                      onChanged: (value) {
+                        themeProvider.updateTheme(value);
+                        _updateThemeInDatabase(value);
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.price_check),
+                    title: Text(
+                      'Tarifas',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TarifasPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text(
+                      'Cerrar Sesion',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    onTap: () {
+                      FirebaseAuth.instance.signOut(); // Cierra el drawer
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
+  void _updateThemeInDatabase(bool isDarkModeEnabled) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String uid = user.uid;
+      FirebaseFirestore.instance.collection('usuarios').doc(uid).update({'isDarkModeEnabled': isDarkModeEnabled});
+    }
+  }
 
- 
 }

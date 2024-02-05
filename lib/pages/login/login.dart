@@ -38,8 +38,8 @@ class _MyLoginState extends State<MyLogin> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.only(left: 35, top: 130),
-              child: Text(
+              padding: const EdgeInsets.only(left: 35, top: 130),
+              child: const Text(
                 '¡Hola!\nBienvenido',
                 style: TextStyle(color: Colors.white, fontSize: 33),
               ),
@@ -53,45 +53,47 @@ class _MyLoginState extends State<MyLogin> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(left: 35, right: 35),
+                      margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
                           TextField(
                             controller: emailController,
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
                               fillColor: Colors.grey.shade100,
                               filled: true,
                               hintText: "Email",
+                              prefixIcon: const Icon(Icons.person, color: Colors.black),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           TextField(
                             controller: passwordController,
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             obscureText: true,
                             decoration: InputDecoration(
                               fillColor: Colors.grey.shade100,
                               filled: true,
                               hintText: "Contraseña",
+                              prefixIcon: const Icon(Icons.lock, color: Colors.black),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Sign in',
+                              const Text(
+                                'Iniciar Sesión',
                                 style: TextStyle(
                                   fontSize: 27,
                                   fontWeight: FontWeight.w700,
@@ -99,20 +101,20 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                               CircleAvatar(
                                 radius: 30,
-                                backgroundColor: Color(0xff4c505b),
+                                backgroundColor: const Color(0xff4c505b),
                                 child: IconButton(
                                   color: Colors.white,
                                   onPressed: () {
                                     signIn();
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_forward,
                                   ),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           Row(
@@ -137,8 +139,8 @@ class _MyLoginState extends State<MyLogin> {
                                     builder: (context) => ForgotPasswordPage(),
                                   ),
                                 ),
-                                child: Text(
-                                  '¿Contraseña?',
+                                child: const Text(
+                                  '¿Olvidaste tu\nContraseña?',
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     color: Color(0xff4c505b),

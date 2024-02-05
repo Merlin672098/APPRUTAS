@@ -46,19 +46,20 @@ class _LoginWidgetState extends State<LoginWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /*Padding(
+              Padding(
                 padding: const EdgeInsets.only(top: 5, bottom: 50),
                 child: Image.asset(
                   'assets/logo.png',
                   height: 200,
                 ),
-              ),*/
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
                   controller: emailController,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
+                    filled: true,
                     labelText: 'Usuario',
                     labelStyle: TextStyle(color: Colors.white),
                     prefixIcon: Icon(Icons.person, color: Colors.white),

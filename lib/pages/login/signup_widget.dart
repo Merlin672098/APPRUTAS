@@ -31,7 +31,144 @@ class _SignUpWidget extends State<SignUpWidget> {
     super.dispose();
   }
 
-  @override
+
+  
+@override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/register2.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: 35, top: 130),
+              child: Text(
+                '¡Hola!\nBienvenido',
+                style: TextStyle(color: Colors.white, fontSize: 33),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.5,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 35, right: 35),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+              height: 40,
+            ),
+            TextFormField(
+              controller: emailController,
+              cursorColor: Colors.white,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(labelText: 'Email'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (email) =>
+                  email != null && !EmailValidator.validate(email)
+                      ? 'Enter a valid email'
+                      : null,
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            TextFormField(
+              controller: passwordController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.length < 6
+                  ? 'Enter min. 6 characters'
+                  : null,
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            TextFormField(
+              controller: passwordController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: ' Confirm Password'),
+              obscureText: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.length < 6
+                  ? 'Enter min. 6 characters'
+                  : null,
+            ),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Color(0xff4c505b),
+                                child: IconButton(
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    signUp();
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_forward,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                '',
+                                style: TextStyle(
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  /*@override
   Widget build(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -124,7 +261,7 @@ class _SignUpWidget extends State<SignUpWidget> {
                 ]))
           ],
         ),
-      ));
+      ));*/
 
   Future signUp() async {
     final isValid = formKey.currentState!.validate();

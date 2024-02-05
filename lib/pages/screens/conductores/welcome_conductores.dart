@@ -4,8 +4,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'mostrar_ubi_conductor.dart';
+import 'prueba_plano.dart';
 
 class ScreenConductor extends StatefulWidget {
   @override
@@ -20,88 +22,82 @@ class _ScreenConductorState extends State<ScreenConductor> {
   void initState() {
     super.initState();
     _requestPermission();
+    
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('live location tracker'),
+        title: const Text('Ubicación en tiempo real'),
       ),
-      body: Column(
-        children: [
-          TextButton(
-            onPressed: () {
-              _getLocation();
-            },
-            child: const Text('AÑADE MI UBICACION'),
-          ),
-          TextButton(
-            onPressed: () {
-              _listenLocation();
-            },
-            child: const Text('Habilita la localizacion'),
-          ),
-          TextButton(
-            onPressed: () {
-              _stopListening();
-            },
-            child: const Text('Detiene la localizacion'),
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection('location').snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data?.docs.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title:
-                          Text(snapshot.data!.docs[index]['name'].toString()),
-                      subtitle: Row(
-                        children: [
-                          Text(snapshot.data!.docs[index]['latitude']
-                              .toString()),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(snapshot.data!.docs[index]['longitude']
-                              .toString()),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.directions),
-                        onPressed: () {
-                          List<String> allUserIds =
-                              snapshot.data!.docs.map((doc) => doc.id).toList();
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                MostrarUbiConductor(allUserIds),
-                          ));
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: TextButton(
+                onPressed: () {
+                  _listenLocation();
+                  
+                  _algoqueponer(context);
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  backgroundColor: Colors.blue,
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.blue),
+                  ),
+                ),
+                child: Text('Habilita la localización'),
+              ),
             ),
-          ),
-        ],
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: TextButton(
+                onPressed: () {
+                  _stopListening();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.all(16),
+                  backgroundColor: Colors.red,
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+                child: Text('Detiene la localización'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   _getLocation() async {
     try {
-      await FirebaseFirestore.instance.collection('location').doc('prueba').set({
+      _requestPermission();
+      await FirebaseFirestore.instance.collection('location').doc().set({
         'latitude': _currentPosition.latitude,
         'longitude': _currentPosition.longitude,
-        'linea':'CE8C2BasK0YDFCEIcMd3',
+        'linea': 'CE8C2BasK0YDFCEIcMd3',
         'name': 'prueba',
+        'parada': true,
       }, SetOptions(merge: true));
     } catch (e) {
       print(e);
@@ -109,6 +105,9 @@ class _ScreenConductorState extends State<ScreenConductor> {
   }
 
   Future<void> _listenLocation() async {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
     _locationSubscription =
         Geolocator.getPositionStream().handleError((onError) {
       print(onError);
@@ -117,20 +116,29 @@ class _ScreenConductorState extends State<ScreenConductor> {
         _locationSubscription = null;
       });
     }).listen((Position currentLocation) async {
-      await FirebaseFirestore.instance.collection('location').doc('prueba').set({
+      print('esta es en 1er plano Latitude: ${currentLocation.latitude}, Longitude: ${currentLocation.longitude}');
+
+      await FirebaseFirestore.instance
+          .collection('location')
+          .doc(user.uid)
+          .set({
         'latitude': currentLocation.latitude,
         'longitude': currentLocation.longitude,
-        'linea':'CE8C2BasK0YDFCEIcMd3',
+        'linea': 'CE8C2BasK0YDFCEIcMd3',
         'name': 'prueba',
+        'userId': user.uid,
       }, SetOptions(merge: true));
     });
   }
+}
+
 
   _stopListening() {
     _locationSubscription?.cancel();
     setState(() {
       _locationSubscription = null;
     });
+    //print('asiduhasi');
   }
 
   /* _requestPermission() async {
@@ -161,7 +169,56 @@ class _ScreenConductorState extends State<ScreenConductor> {
     if (permission == LocationPermission.deniedForever) {
       return Future.error('La ubicaion esta permanentementedenegada');
     }
-
+var status = await Permission.location.request();
+  if (status.isGranted) {
+    print('Permiso de ubicación concedido');
+  } else {
+    print('Permiso de ubicación denegado');
+  }
     return await Geolocator.getCurrentPosition();
+  }
+
+
+  void _algoqueponer(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          content: Container(
+            width: 300,
+            height: 300,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+              border: Border.all(color: Colors.black, width: 2.0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset('assets/win.gif'),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "¡Ya estuvo!",
+                  style: TextStyle(color: Colors.black, fontSize: 15),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Aceptar"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

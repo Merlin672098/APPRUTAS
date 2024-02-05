@@ -24,7 +24,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Text('Reset password'),
+          title: const Text('Restablecer Contraseña'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
@@ -34,7 +34,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Receive an email to\nreset your password',
+                    'Recibe un correo electrónico para\nrestablecer tu contraseña',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 24),
                   ),
@@ -57,7 +57,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     icon: const Icon(Icons.email_outlined),
                     label: const Text(
-                      'Reset password',
+                      'Restablecer Contraseña',
                       style: TextStyle(fontSize: 24),
                     ),
                     onPressed: resetPassword,

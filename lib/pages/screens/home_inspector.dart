@@ -36,6 +36,7 @@ class HomeInspector extends StatelessWidget {
         body: TabBarView(children: <Widget>[
           InspectoresPage(),
           ScreenInspectores(),
+          //PruebaWeb(),
 
         ]),
       ),
