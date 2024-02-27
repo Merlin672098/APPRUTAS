@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
-import '../pages/screens/home_admin.dart';
-import '../pages/screens/home_conductor.dart';
-import '../pages/screens/home_inspector.dart';
-import '../pages/screens/home_pasajero.dart';
-import '../pages/screens/inspectores/prueba_web.dart';
-import '../pages/screens/pasajeros/HomeVeri.dart';
+import '../interfaceadapters/screens/home_admin.dart';
+import '../interfaceadapters/screens/home_conductor.dart';
+import '../interfaceadapters/screens/home_inspector.dart';
+import '../interfaceadapters/screens/home_pasajero.dart';
+import '../interfaceadapters/screens/inspectores/prueba_web.dart';
+import '../interfaceadapters/screens/pasajeros/HomeVeri.dart';
 import '../pruebaprovider.dart';  
 
 class VerificacionRolWidget extends StatelessWidget {

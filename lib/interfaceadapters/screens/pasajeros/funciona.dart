@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:rutasmicros/pages/screens/pasajeros/cons_mapstyle.dart';
+import 'package:rutasmicros/interfaceadapters/screens/pasajeros/cons_mapstyle.dart';
 import 'package:rutasmicros/pruebaprovider.dart';
 
 class Funciona extends StatefulWidget {

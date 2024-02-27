@@ -4,9 +4,11 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:background_locator_2/location_dto.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'file_manager.dart';
-
 
 class LocationServiceRepository {
   static LocationServiceRepository _instance = LocationServiceRepository._();
@@ -53,12 +55,36 @@ class LocationServiceRepository {
   }
 
   Future<void> callback(LocationDto locationDto) async {
-    print('$_count location in dart: ${locationDto.toString()}');
+    print('$_count locacion en dart: ${locationDto.toString()}');
+    //print('Latitude: ${locationDto.latitude}, Longitude: ${locationDto.longitude}');
     await setLogPosition(_count, locationDto);
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(locationDto.toJson());
     _count++;
+    print('puta');
+    double latitude = locationDto.latitude;
+    double longitude = locationDto.longitude;
+    await sendLocationToFirestore(latitude, longitude);
+    print('puta');
+  }
 
+  static Future<void> sendLocationToFirestore(
+    double latitude, double longitude) async {
+    print('puta');
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('location')
+          .doc(user.uid)
+          .set({
+        'latitude': latitude,
+        'longitude': longitude,
+        'linea': 'CE8C2BasK0YDFCEIcMd3',
+        'name': 'prueba',
+        'userId': user.uid,
+      }, SetOptions(merge: true));
+      print('Ubicación enviada a Firestore');
+    }
   }
 
   static Future<void> setLogLabel(String label) async {
@@ -92,6 +118,3 @@ class LocationServiceRepository {
         dp(locationDto.longitude, 4).toString();
   }
 }
-
-
-

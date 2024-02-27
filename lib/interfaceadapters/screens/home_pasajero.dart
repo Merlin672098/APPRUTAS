@@ -62,6 +62,7 @@ class _HomePasajeroState extends State<HomePasajero> {
                   icon: Icon(Icons.directions_walk),
                   label: 'TODAS LAS RUTAS',
                 ),
+                
               ],
               currentIndex: _selectedIndex,
               selectedItemColor: Colors.red,

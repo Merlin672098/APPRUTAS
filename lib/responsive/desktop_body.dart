@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rutasmicros/responsive/Items.dart';
 import '../constants.dart';
-import '../pages/screens/conductores/mostrar_ubi_conductor.dart';
+import '../interfaceadapters/screens/conductores/mostrar_ubi_conductor.dart';
 import '../util/my_box.dart';
 import '../util/my_tile.dart';
 

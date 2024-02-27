@@ -105,32 +105,31 @@ class _ScreenConductorState extends State<ScreenConductor> {
   }
 
   Future<void> _listenLocation() async {
-  User? user = FirebaseAuth.instance.currentUser;
+    User? user = FirebaseAuth.instance.currentUser;
 
-  if (user != null) {
-    _locationSubscription =
-        Geolocator.getPositionStream().handleError((onError) {
-      print(onError);
-      _locationSubscription?.cancel();
-      setState(() {
-        _locationSubscription = null;
+    if (user != null) {
+      _locationSubscription = Geolocator.getPositionStream().handleError((onError) {
+        print(onError);
+        _locationSubscription?.cancel();
+        setState(() {
+          _locationSubscription = null;
+        });
+      }).listen((Position currentLocation) async {
+        print('esta es en 1er plano Latitude: ${currentLocation.latitude}, Longitude: ${currentLocation.longitude}');
+
+        await FirebaseFirestore.instance
+            .collection('location')
+            .doc(user.uid)
+            .set({
+          'latitude': currentLocation.latitude,
+          'longitude': currentLocation.longitude,
+          'linea': 'CE8C2BasK0YDFCEIcMd3',
+          'name': 'prueba',
+          'userId': user.uid,
+        }, SetOptions(merge: true));
       });
-    }).listen((Position currentLocation) async {
-      print('esta es en 1er plano Latitude: ${currentLocation.latitude}, Longitude: ${currentLocation.longitude}');
-
-      await FirebaseFirestore.instance
-          .collection('location')
-          .doc(user.uid)
-          .set({
-        'latitude': currentLocation.latitude,
-        'longitude': currentLocation.longitude,
-        'linea': 'CE8C2BasK0YDFCEIcMd3',
-        'name': 'prueba',
-        'userId': user.uid,
-      }, SetOptions(merge: true));
-    });
+    }
   }
-}
 
 
   _stopListening() {

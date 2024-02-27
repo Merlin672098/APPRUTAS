@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'conductores/listar_conductores.dart';
-import 'conductores/welcome_conductores.dart';
+import 'conductores/funka/fbs copy.dart';
+import 'conductores/funka/service.dart';
+
 
 class HomeConductor extends StatelessWidget {
   @override
@@ -26,6 +27,14 @@ class HomeConductor extends StatelessWidget {
               icon: Icon(Icons.home),
               text: "Home",
             ),
+            /*Tab(
+              icon: Icon(Icons.contacts),
+              text: "Usuarios",
+            ),*/
+            /*Tab(
+              icon: Icon(Icons.contacts),
+              text: "Usuarios",
+            ),*/
             Tab(
               icon: Icon(Icons.contacts),
               text: "Usuarios",
@@ -33,9 +42,10 @@ class HomeConductor extends StatelessWidget {
           ]),
         ),
         body: TabBarView(children: <Widget>[
-          ConductorPage(),
-          ScreenConductor(),
-
+          Quevoyahacerwn(),
+          //ScreenConductor(),
+          //LocationView(),
+          Sepuedebanda(),
         ]),
       ),
     );

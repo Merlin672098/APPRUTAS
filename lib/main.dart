@@ -4,9 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rutasmicros/firebase_options.dart';
 import 'package:rutasmicros/pruebaprovider.dart';
 import 'package:rutasmicros/utils.dart';
-import 'pages/login/auth_page.dart';
-import 'pages/login/verify_email_page.dart';
+import 'interfaceadapters/login/auth_page.dart';
+import 'interfaceadapters/login/verify_email_page.dart';
 import 'package:provider/provider.dart';
+
+import 'interfaceadapters/screens/conductores/ayuda.dart';
+import 'sercice.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +17,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
