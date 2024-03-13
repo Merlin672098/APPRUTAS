@@ -189,85 +189,85 @@ class _FavoritosPageState extends State<FavoritosPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('RUTAS'),
-    ),
-    body: Column(
-      children: [
-        Expanded(
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('lineas')
-                .where('id',
-                    whereIn: miVariableArray2.isNotEmpty
-                        ? miVariableArray2
-                        : ['dummyValueToAvoidEmptyList'])
-                .snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('RUTAS'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('lineas')
+                  .where('id',
+                      whereIn: miVariableArray2.isNotEmpty
+                          ? miVariableArray2
+                          : ['dummyValueToAvoidEmptyList'])
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (miVariableArray2.isEmpty) {
-                return const Center(
-                  child: Text('No agregaste rutas favoritas!'),
-                );
-              }
-
-              return ListView.builder(
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    color: context.read<ThemeProvider>().isDarkModeEnabled
-                        ? Colors.blueGrey[800]
-                        : Colors.blueGrey[50],
-                    child: InkWell(
-                      onTap: () {
-                        String nombreDocumento =
-                            snapshot.data!.docs[index]['nombre'].toString();
-                        List<LatLng> listaCoordenadas =
-                            obtenerListaDeCoordenadas(nombreDocumento);
-                        String selectedUserId =
-                            snapshot.data!.docs[index].id;
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              Funciona(selectedUserId, listaCoordenadas),
-                        ));
-                      },
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: AssetImage('assets/login.png'),
-                        ),
-                        title: Text(
-                          snapshot.data!.docs[index]['nombre'].toString(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: context.read<ThemeProvider>().isDarkModeEnabled
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        ),
-                        subtitle: const SizedBox(),
-                        trailing: const SizedBox(), // Remove the trailing icon
-                      ),
-                    ),
+                if (miVariableArray2.isEmpty) {
+                  return const Center(
+                    child: Text('No agregaste tus rutas favoritas!'),
                   );
-                },
-              );
-            },
-          ),
-        ),
-      ],
-    ),
-  );
-}
+                }
 
+                return ListView.builder(
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 5,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      color: context.read<ThemeProvider>().isDarkModeEnabled
+                          ? Colors.blueGrey[800]
+                          : Colors.blueGrey[50],
+                      child: InkWell(
+                        onTap: () {
+                          String nombreDocumento =
+                              snapshot.data!.docs[index]['nombre'].toString();
+                          List<LatLng> listaCoordenadas =
+                              obtenerListaDeCoordenadas(nombreDocumento);
+                          String selectedUserId = snapshot.data!.docs[index].id;
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                Funciona(selectedUserId, listaCoordenadas),
+                          ));
+                        },
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: AssetImage('assets/login.png'),
+                          ),
+                          title: Text(
+                            snapshot.data!.docs[index]['nombre'].toString(),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: context
+                                      .read<ThemeProvider>()
+                                      .isDarkModeEnabled
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                          subtitle: const SizedBox(),
+                          trailing: const SizedBox(),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> cargarDatos() async {
     try {

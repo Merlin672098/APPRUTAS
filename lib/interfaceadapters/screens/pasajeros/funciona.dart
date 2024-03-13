@@ -51,29 +51,27 @@ class _LevitarState extends State<Funciona> {
   }
 
   _getCurrentLocation() async {
-  try {
-    Position position = await _requestPermission();
+    try {
+      Position position = await _requestPermission();
 
-    setState(() {
-
-      markers.add(
-        Marker(
-          markerId: MarkerId('currentLocation'),
-          position: LatLng(position.latitude, position.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          infoWindow: InfoWindow(
-            title: 'Ubicación actual',
-            snippet: 'Lat: ${position.latitude}, Lng: ${position.longitude}',
+      setState(() {
+        markers.add(
+          Marker(
+            markerId: MarkerId('currentLocation'),
+            position: LatLng(position.latitude, position.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure),
+            infoWindow: InfoWindow(
+              title: 'Ubicación actual',
+              snippet: 'Lat: ${position.latitude}, Lng: ${position.longitude}',
+            ),
           ),
-        ),
-      );
-    });
-
-  } catch (e) {
-    print("Error getting location: $e");
+        );
+      });
+    } catch (e) {
+      print("Error getting location: $e");
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

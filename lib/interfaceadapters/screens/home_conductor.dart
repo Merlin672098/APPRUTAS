@@ -23,26 +23,26 @@ class HomeConductor extends StatelessWidget {
             ),
           ],
           bottom: const TabBar(indicatorColor: Colors.red, tabs: <Widget>[
+            /*Tab(
+              icon: Icon(Icons.home),
+              text: "Home",
+            ),*/
+            /*Tab(
+              icon: Icon(Icons.contacts),
+              text: "Usuarios",
+            ),*/
+            /*Tab(
+              icon: Icon(Icons.contacts),
+              text: "Usuarios",
+            ),*/
             Tab(
               icon: Icon(Icons.home),
               text: "Home",
             ),
-            /*Tab(
-              icon: Icon(Icons.contacts),
-              text: "Usuarios",
-            ),*/
-            /*Tab(
-              icon: Icon(Icons.contacts),
-              text: "Usuarios",
-            ),*/
-            Tab(
-              icon: Icon(Icons.contacts),
-              text: "Usuarios",
-            ),
           ]),
         ),
         body: TabBarView(children: <Widget>[
-          Quevoyahacerwn(),
+          //Quevoyahacerwn(),
           //ScreenConductor(),
           //LocationView(),
           Sepuedebanda(),

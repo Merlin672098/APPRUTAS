@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:rutasmicros/interfaceadapters/screens/conductores/funka/cronometro.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -74,7 +75,7 @@ Future<void> initializeService() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
-
+  //User? currentUser = await getCurrentUser();
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       // this will be executed when app is in foreground or background in separated isolate
@@ -121,9 +122,9 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
-  /*await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );*/
+  );
   DartPluginRegistrant.ensureInitialized();
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -179,7 +180,10 @@ void onStart(ServiceInstance service) async {
     }
 
     final position = await _getLocation();
-    enviarUbicacion(position);
+    //enviarUbicacion(position);
+    _writeToFirebase(device, position);
+    _writeToFirebase2(device, position);
+    //API
     //await _writeToFirebase(device, position);
     print('FLUTTER BACKGROUND SERVICE: $position.latitude');
     service.invoke(
@@ -194,6 +198,11 @@ void onStart(ServiceInstance service) async {
     );
   });
 }
+/*
+Future<User?> getCurrentUser() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  return user;
+}*/
 
 Future<void> _writeToFirebase(String? device, Position position) async {
   User? user = FirebaseAuth.instance.currentUser;
@@ -207,10 +216,58 @@ Future<void> _writeToFirebase(String? device, Position position) async {
       'userId': user?.uid,
     }, SetOptions(merge: true));
 
-    print('Data written to Firebase successfully');
+    print('mandando ando');
   } catch (e) {
-    print('Error writing to Firebase: $e');
+    print('Error : $e');
   }
+}
+
+Future<void> _writeToFirebase2(String? device, Position position) async {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  try {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('prueba2').doc(user?.uid);
+
+    DocumentSnapshot docSnapshot = await docRef.get();
+
+    if (docSnapshot.exists) {
+      List<dynamic> currentLocations =
+          (docSnapshot.data() as Map<String, dynamic>)['locations'];
+
+      List<dynamic> updatedLocations = [
+        ...currentLocations,
+        _createGeoPoint(position)
+      ];
+
+      await docRef.update({
+        'locations': updatedLocations,
+      });
+
+      print('Nueva posición agregada');
+    } else {
+      await docRef.set({
+        'locations': [_createGeoPoint(position)],
+        'linea': 'CE8C2BasK0YDFCEIcMd3',
+        'name': 'prueba',
+        'userId': user?.uid,
+        //variable de prueba para saber si se completo el recorrido
+        'recorridoCompleto': false
+      });
+      String createdDocId = docRef.id;
+      print('Documento creado para la prueba idk $createdDocId');
+      String storedDocId = createdDocId;
+      
+
+      print('Documento creado');
+    }
+  } catch (e) {
+    print('Error : $e');
+  }
+}
+
+GeoPoint _createGeoPoint(Position position) {
+  return GeoPoint(position.latitude, position.longitude);
 }
 
 Future<Position> _getLocation() async {
@@ -245,10 +302,12 @@ Future<void> enviarUbicacion(Position position) async {
       'name': 'prueba',
       'userId': 'GK75zf08BNZipZibFjGpVJbQ5W93',
     };
-    String posicionJson = jsonEncode(posicionMapa);
-
-    channel = WebSocketChannel.connect(Uri.parse('ws://192.168.0.104:3000'));
-    channel.sink.add(posicionJson);
+    //String posicionJson = jsonEncode(posicionMapa);
+    String mensaje2 = 'hola2';
+    channel = WebSocketChannel.connect(
+        Uri.parse('ws://nfc.api.dev.404.codes/api/auth'));
+    //nfc.api.dev.404.code/api/auth
+    channel.sink.add(mensaje2);
 
     channel.stream.listen((message) {
       print(message);
@@ -268,21 +327,35 @@ class Sepuedebanda extends StatefulWidget {
 
 class _SepuedebandaStateState extends State<Sepuedebanda> {
   String text = "Stop Service";
+  late Timer _timer;
+  int _seconds = 0;
 
   @override
   void initState() {
     super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
     initializeService();
     _requestPermission();
   }
 
   @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Service App con weas bonitas'),
-        ),
+            //title: const Text('Service App con weas bonitas'),
+            ),
         body: Column(
           children: [
             StreamBuilder<Map<String, dynamic>?>(
@@ -348,10 +421,14 @@ class _SepuedebandaStateState extends State<Sepuedebanda> {
                   text = 'Stop Service';
                 } else {
                   text = 'Start Service';
+                  //iniciarCronometro();
                 }
                 setState(() {});
               },
             ),
+            //cronometro
+            //Text('Tiempo transcurrido: $_seconds segundos'),
+            Cronometro(), //Cronometro
           ],
         ),
       ),
@@ -375,7 +452,6 @@ class _LogViewState extends State<LogView> {
   bool listenLocation = true;
   Ubicacion? _currentLocation;
 
-  
   void _updateLocation(Position currentLocation) async {
     Position position = await Geolocator.getCurrentPosition();
     setState(() {
@@ -384,38 +460,6 @@ class _LogViewState extends State<LogView> {
         longitude: position.longitude,
       );
     });
-  }
-
-  void _listenLocation() async {
-    if (!listenLocation)
-      return; // Si no se debe escuchar, salimos de la función
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      _locationSubscription =
-          Geolocator.getPositionStream().handleError((onError) {
-        print(onError);
-        _locationSubscription?.cancel();
-        setState(() {
-          _locationSubscription = null;
-        });
-      }).listen((Position currentLocation) async {
-        print(
-            'esta es en 2do plano Latitude: ${currentLocation.latitude}, Longitude: ${currentLocation.longitude}');
-        _updateLocation(currentLocation);
-
-        await FirebaseFirestore.instance
-            .collection('location')
-            .doc(user.uid)
-            .set({
-          'latitude': currentLocation.latitude,
-          'longitude': currentLocation.longitude,
-          'linea': 'CE8C2BasK0YDFCEIcMd3',
-          'name': 'prueba',
-          'userId': user.uid,
-        }, SetOptions(merge: true));
-      });
-    }
   }
 
   @override
@@ -428,7 +472,7 @@ class _LogViewState extends State<LogView> {
       if (mounted) {
         setState(() {});
       }
-      _listenLocation(); 
+      //_listenLocation();
     });
   }
 
@@ -452,8 +496,7 @@ class _LogViewState extends State<LogView> {
       listenLocation = !listenLocation;
     });
     if (!listenLocation) {
-      _locationSubscription
-          ?.cancel(); 
+      _locationSubscription?.cancel();
     }
   }
 
@@ -461,14 +504,6 @@ class _LogViewState extends State<LogView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: toggleLocationListening,
-          child: Text(listenLocation ? 'Detener Escucha' : 'Iniciar Escucha'),
-        ),
-        if (_currentLocation !=
-            null) 
-          Text(
-              'Latitude: ${_currentLocation!.latitude}, Longitude: ${_currentLocation!.longitude}'),
         Expanded(
           child: ListView.builder(
             itemCount: logs.length,

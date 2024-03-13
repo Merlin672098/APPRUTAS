@@ -16,10 +16,18 @@ class DesktopScaffold extends StatefulWidget {
 }
 
 class _DesktopScaffoldState extends State<DesktopScaffold> {
+  String pixeldeAsociacion = '';
   GoogleMapController? _controller;
   bool _added = false;
   Set<Marker> markers = {};
   Set<Polyline> polylines = {};
+
+  @override
+  void initState() {
+    super.initState();
+    cargarAsociacion();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +50,8 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                       width: double.infinity,
                       child: GridView.builder(
                         itemCount: data.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                         ),
                         itemBuilder: (context, index) {
@@ -55,19 +64,18 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                       ),
                     ),
                   ),
-
                   const Padding(
                     padding: EdgeInsets.all(13.0),
                     child: Text('mapa'),
                   ),
-                  
                   Expanded(
                     child: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('location')
                           //.where('linea', isEqualTo: widget.userId)
                           .snapshots(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (_added) {
                           //mymap(snapshot);
                         }
@@ -79,7 +87,8 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
 
                         snapshot.data!.docs.forEach((document) {
                           bool isParada = document['parada'] ?? false;
-                          Color markerColor = isParada ? Colors.red : Colors.blue;
+                          Color markerColor =
+                              isParada ? Colors.red : Colors.blue;
 
                           markers.add(
                             Marker(
@@ -89,7 +98,9 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                               ),
                               markerId: MarkerId(document.id),
                               icon: BitmapDescriptor.defaultMarkerWithHue(
-                                isParada ? BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue,
+                                isParada
+                                    ? BitmapDescriptor.hueRed
+                                    : BitmapDescriptor.hueBlue,
                               ),
                               infoWindow: InfoWindow(
                                 title: 'Conductor ${document['name']}',
@@ -107,17 +118,20 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                             initialCameraPosition: CameraPosition(
                               target: LatLng(
                                 markers
-                                    .map((marker) => marker.position.latitude)
-                                    .reduce((a, b) => a + b) /
+                                        .map((marker) =>
+                                            marker.position.latitude)
+                                        .reduce((a, b) => a + b) /
                                     markers.length,
                                 markers
-                                        .map((marker) => marker.position.longitude)
+                                        .map((marker) =>
+                                            marker.position.longitude)
                                         .reduce((a, b) => a + b) /
                                     markers.length,
                               ),
                               zoom: 14.47,
                             ),
-                            onMapCreated: (GoogleMapController controller) async {
+                            onMapCreated:
+                                (GoogleMapController controller) async {
                               //controller.setMapStyle(themeProvider.getMapStyle());
 
                               setState(() {
@@ -144,16 +158,52 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('nasda'),
+                    child: Text('LINEAS'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 400,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[400],
-                      ),
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('lineas')
+                          .where('idasociacion',
+                              isEqualTo: pixeldeAsociacion) //widget.userId
+                          .snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return ListView.builder(
+                          itemCount: snapshot.data?.docs.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text('Linea: ' +
+                                  snapshot.data!.docs[index]['nombre']
+                                      .toString()),
+                              /*subtitle: Row(
+                                children: [
+                                  Text('Latitude: '+snapshot.data!.docs[index]['latitude'].toString()),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text('Longitude: '+snapshot.data!.docs[index]['longitude'].toString()),
+                                ],
+                              ),*/
+                              trailing: IconButton(
+                                icon: Icon(Icons.directions),
+                                onPressed: () {
+                                  List<String> allUserIds = snapshot.data!.docs
+                                      .map((doc) => doc.id)
+                                      .toList();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        MostrarUbiConductor(allUserIds),
+                                  ));
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                   const Padding(
@@ -162,8 +212,11 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                   ),
                   Expanded(
                     child: StreamBuilder(
-                      stream: FirebaseFirestore.instance.collection('location').snapshots(),
-                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      stream: FirebaseFirestore.instance
+                          .collection('location')
+                          .snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return Center(child: CircularProgressIndicator());
                         }
@@ -171,14 +224,20 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                           itemCount: snapshot.data?.docs.length,
                           itemBuilder: (context, index) {
                             return ListTile(
-                              title: Text('Usuario: '+snapshot.data!.docs[index]['name'].toString()),
+                              title: Text('Usuario: ' +
+                                  snapshot.data!.docs[index]['name']
+                                      .toString()),
                               subtitle: Row(
                                 children: [
-                                  Text('Latitude: '+snapshot.data!.docs[index]['latitude'].toString()),
+                                  Text('Latitude: ' +
+                                      snapshot.data!.docs[index]['latitude']
+                                          .toString()),
                                   SizedBox(
                                     width: 20,
                                   ),
-                                  Text('Longitude: '+snapshot.data!.docs[index]['longitude'].toString()),
+                                  Text('Longitude: ' +
+                                      snapshot.data!.docs[index]['longitude']
+                                          .toString()),
                                 ],
                               ),
                               /*trailing: IconButton(
@@ -190,7 +249,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                                   ));
                                 },
                               ),*/
-                            );  
+                            );
                           },
                         );
                       },
@@ -203,6 +262,39 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
         ),
       ),
     );
+  }
+
+  Future<void> cargarAsociacion() async {
+    try {
+      pixeldeAsociacion = (await getDataUser())!;
+      print('llega ? $pixeldeAsociacion');
+    } catch (e) {
+      print("Error in cargarAsociacion: $e");
+      throw e;
+    }
+  }
+
+  Future<String?> getDataUser() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      QuerySnapshot favoritosSnapshot = await FirebaseFirestore.instance
+          .collection('USER_ASOCI')
+          .where('id_user', isEqualTo: user?.uid)
+          .get();
+
+      if (favoritosSnapshot.docs.isEmpty) {
+        return null;
+      }
+
+      String idasociacion =
+          favoritosSnapshot.docs.first['id_asociacion'].toString();
+      print(
+          'Este es el idasociacion al que pertenece el usuario $idasociacion');
+      return idasociacion;
+    } catch (e) {
+      print("Error in getDataUser: $e");
+      throw e;
+    }
   }
 
   /*void _drawPolyline() {

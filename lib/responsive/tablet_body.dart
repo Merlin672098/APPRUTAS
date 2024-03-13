@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../constants.dart';
@@ -12,6 +13,10 @@ class TabletScaffold extends StatefulWidget {
 }
 
 class _TabletScaffoldState extends State<TabletScaffold> {
+  GoogleMapController? _controller;
+  bool _added = false;
+  Set<Marker> markers = {};
+  Set<Polyline> polylines = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,12 +44,76 @@ class _TabletScaffoldState extends State<TabletScaffold> {
             ),
             SizedBox(height: 20,),
             Expanded(
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(37.7749, -122.4194), 
-                        zoom: 12.0, 
-                      ),
-                      markers: Set<Marker>(), 
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('location')
+                          //.where('linea', isEqualTo: widget.userId)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (_added) {
+                          //mymap(snapshot);
+                        }
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        Set<Marker> markers = Set<Marker>();
+
+                        snapshot.data!.docs.forEach((document) {
+                          bool isParada = document['parada'] ?? false;
+                          Color markerColor = isParada ? Colors.red : Colors.blue;
+
+                          markers.add(
+                            Marker(
+                              position: LatLng(
+                                (document['latitude'] as num).toDouble(),
+                                (document['longitude'] as num).toDouble(),
+                              ),
+                              markerId: MarkerId(document.id),
+                              icon: BitmapDescriptor.defaultMarkerWithHue(
+                                isParada ? BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue,
+                              ),
+                              infoWindow: InfoWindow(
+                                title: 'Conductor ${document['name']}',
+                                snippet: 'En linea',
+                              ),
+                            ),
+                          );
+                        });
+
+                        if (markers.isNotEmpty) {
+                          return GoogleMap(
+                            mapType: MapType.normal,
+                            markers: markers,
+                            polylines: polylines,
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                markers
+                                    .map((marker) => marker.position.latitude)
+                                    .reduce((a, b) => a + b) /
+                                    markers.length,
+                                markers
+                                        .map((marker) => marker.position.longitude)
+                                        .reduce((a, b) => a + b) /
+                                    markers.length,
+                              ),
+                              zoom: 14.47,
+                            ),
+                            onMapCreated: (GoogleMapController controller) async {
+                              //controller.setMapStyle(themeProvider.getMapStyle());
+
+                              setState(() {
+                                _controller = controller;
+                                _added = true;
+                                //_drawPolyline();
+                                //_getCurrentLocation();
+                              });
+                            },
+                          );
+                        } else {
+                          return Center(child: Text('No hay marcadores.'));
+                        }
+                      },
                     ),
                   ),
           ],
